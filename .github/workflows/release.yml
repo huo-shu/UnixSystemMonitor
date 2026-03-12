@@ -23,33 +23,19 @@ jobs:
         make all
         ls -la monitor.o monitor
 
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-publish-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
       with:
-        tag_name: ${{ github.ref }}
-        name: Release ${{ github.ref_name }}
+        name: compiled-binaries
+        path: |
+          monitor.o
+          monitor
+
+    - name: Create Release with Assets
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          monitor.o
+          monitor
         draft: false
         prerelease: false
-
-    - name: Upload Object File
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./monitor.o
-        asset_name: monitor.o
-        asset_content_type: application/object
-
-    - name: Upload Executable
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./monitor
-        asset_name: monitor
-        asset_content_type: application/x-executable
