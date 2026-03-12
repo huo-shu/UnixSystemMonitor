@@ -12,9 +12,10 @@ NC='\033[0m' # No Color
 echo -e "${GREEN}Unix System Monitor Release Script${NC}"
 echo "================================="
 
-# Check if running on Linux
-if [[ "$OSTYPE" != "linux-gnu"* ]]; then
-    echo -e "${RED}Error: This script requires Linux environment${NC}"
+# Check if running on Linux or compatible environment (MSYS2/Cygwin)
+if [[ "$OSTYPE" != "linux-gnu"* && "$OSTYPE" != "msys" && "$OSTYPE" != "cygwin" ]]; then
+    echo -e "${RED}Error: This script requires Linux or compatible environment${NC}"
+    echo -e "${YELLOW}Current OSTYPE: $OSTYPE${NC}"
     exit 1
 fi
 
@@ -24,16 +25,18 @@ if ! command -v git &> /dev/null; then
     exit 1
 fi
 
-# Check if make is installed
-if ! command -v make &> /dev/null; then
-    echo -e "${RED}Error: make is not installed${NC}"
-    exit 1
-fi
-
 # Check if gcc is installed
 if ! command -v gcc &> /dev/null; then
     echo -e "${RED}Error: gcc is not installed${NC}"
     exit 1
+fi
+
+# Use gcc directly if make is not available
+if ! command -v make &> /dev/null; then
+    echo -e "${YELLOW}Warning: make is not installed, using gcc directly${NC}"
+    USE_GCC_DIRECTLY=true
+else
+    USE_GCC_DIRECTLY=false
 fi
 
 # Get version from user
@@ -53,8 +56,16 @@ if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
 fi
 
 echo -e "${YELLOW}Building project...${NC}"
-make clean
-make all
+if [ "$USE_GCC_DIRECTLY" = true ]; then
+    # Use gcc directly
+    rm -f monitor.o monitor
+    gcc -Wall -Wextra -std=c99 -c src/main.c -o monitor.o
+    gcc -Wall -Wextra -std=c99 src/main.c -o monitor
+else
+    # Use make
+    make clean
+    make all
+fi
 
 # Verify build was successful
 if [ ! -f "monitor.o" ] || [ ! -f "monitor" ]; then
