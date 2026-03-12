@@ -1,4 +1,4 @@
-# 简易系统监视器程序详解
+# 简易系统监视器
 
 ## 1. 程序概述
 
@@ -40,7 +40,7 @@
 - 获取CPU时间统计
 - 计算使用率百分比
 
-计算公式：$CPU使用率 = (当前时间 - 上次时间) / 总时间差值 × 100%$
+计算公式：$CPU\text{使用率} = (当前时间 - 上次时间) / 总时间差值 \times 100\%$
 
 ### 关键变量
 - `user, system, nice, idle, ioWait, highIrq, softIrq, steal`: 当前CPU时间统计
@@ -55,9 +55,11 @@
 
 计算公式：
 $$
-buff/cache = Buffers + Cached + SReclaimable
-used = MemTotal - MemFree - buff/cache
-SwapUsed = SwapTotal - SwapFree
+\begin{align}
+buff/cache &= Buffers + Cached + SReclaimable \\
+used &= MemTotal - MemFree - buff/cache \\
+SwapUsed &= SwapTotal - SwapFree
+\end{align}
 $$
 
 ### 关键变量

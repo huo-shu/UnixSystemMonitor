@@ -1,0 +1,55 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 匹配 v1.0.0, v2.1.0 等标签
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc make
+
+    - name: Build project
+      run: |
+        make all
+        ls -la monitor.o monitor
+
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-publish-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        name: Release ${{ github.ref_name }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Object File
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./monitor.o
+        asset_name: monitor.o
+        asset_content_type: application/object
+
+    - name: Upload Executable
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./monitor
+        asset_name: monitor
+        asset_content_type: application/x-executable
