@@ -6,6 +6,11 @@
 #include <unistd.h> // sleep函数
 #include <termios.h> // getch函数，vsc无法使用该库。
 
+// 确保DT_DIR被定义，某些系统可能没有这个常量
+#ifndef DT_DIR
+#define DT_DIR 4
+#endif
+
 /* 清屏函数
 v1 由于作业要求采用ANSI 转义序列控制终端行为，放弃使用system clear。
 查表得知ASCII27 \033 为esc，[2J：清除整个屏幕，［H：Cursor Position，将光标移动到屏幕左上角。
@@ -223,6 +228,7 @@ void readLoadAvg() {
 /* 遍历进程目录：枚举活跃进程，读取PID和程序名。
 v2 调整结构，不采用其他函数的if判断和报错方式，而是正向判断。
 v3 修正目录名称，并非command,而是comm。根据官方文档，command文件包含完整命令行，而comm文件只包含程序名，且不包含参数。
+v4 修复DT_DIR兼容性：添加条件编译确保DT_DIR常量被正确定义，解决GitHub Actions编译错误。
 */
 void listProcesses() {
     // 进程目录
