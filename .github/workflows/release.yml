@@ -23,14 +23,6 @@ jobs:
         make all
         ls -la monitor.o monitor
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: compiled-binaries
-        path: |
-          monitor.o
-          monitor
-
     - name: Create Release with Assets
       uses: softprops/action-gh-release@v1
       with:
