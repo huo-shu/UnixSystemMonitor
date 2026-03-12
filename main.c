@@ -127,6 +127,7 @@ v2 变量定义为lu。
 v3 发现重大问题，top所显示的内容不只Memory Usage,且计算公式Used = MemTotal - MemAvailable存在严重偏差。
 v4 关闭指针位置错误，后续迭代无法继续读取文件内容。只有匹配成功时才使用 sscanf() 解析数字。
 v5 根据b站视频，改用Unix最常用的strncmp安全比较字符串。
+v6 增加swap相关字段。未避免提前退出，移除break。
 */
 
 void readMemoryInfo()
@@ -142,6 +143,10 @@ void readMemoryInfo()
     unsigned long MemAvailable = 0;
     unsigned long Used;
     unsigned long BuffCache;
+
+    unsigned long SwapTotal = 0;
+    unsigned long SwapFree = 0;
+    unsigned long SwapUsed;
 
     fp = fopen("/proc/meminfo", "r");
     if (!fp) { //无法打开
@@ -167,7 +172,12 @@ void readMemoryInfo()
         }
         else if (strncmp(buffer, "MemAvailable:", 13) == 0) {
             sscanf(buffer + 13, "%lu", &MemAvailable);
-            break; // 根据AI建议，最后一个字段找到后，应当退出循环。
+        }
+        else if (strncmp(buffer, "SwapTotal:", 10) == 0) {
+            sscanf(buffer + 10, "%lu", &SwapTotal);
+        }
+        else if (strncmp(buffer, "SwapFree:", 9) == 0) {
+            sscanf(buffer + 9, "%lu", &SwapFree);
         }
     }
 
@@ -176,12 +186,15 @@ void readMemoryInfo()
     /* 计算:
     buff/cache = Buffers + Cached + SReclaimable
     used = MemTotal - MemFree - buff/cache
+    SwapUsed = SwapTotal - SwapFree
     */
     BuffCache = Buffers + Cached + SReclaimable;
     Used = MemTotal - MemFree - BuffCache;
+    SwapUsed = SwapTotal - SwapFree;
 
     //输出:
     printf("MiB Mem : %.1f total, %.1f free, %.1f used, %.1f buff/cache\n",MemTotal / 1024.0,MemFree / 1024.0,Used / 1024.0,BuffCache / 1024.0);
+    printf("MiB Swap: %.1f total, %.1f free, %.1f used\n",SwapTotal / 1024.0,SwapFree / 1024.0,SwapUsed / 1024.0);
     printf("Avail Mem: %.1f MiB\n",MemAvailable / 1024.0);
 }
 
