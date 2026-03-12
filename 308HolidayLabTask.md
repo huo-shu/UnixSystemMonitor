@@ -1,0 +1,32 @@
+#### **前端：**
+
+做一个旅游网站，具体实现如下图
+
+![](https://s2.imgbb.ws/file/storage-sv2/Qwbkn.png)
+
+
+
+#### **后端：**
+
+用自己擅长的语言写个计算器，逻辑就只有加减乘除，小数点，清空
+
+***要求实现图形化***
+
+
+
+
+
+#### 嵌入式：
+
+在以下两道题中任选一道完成
+
+![选题一](https://s1.imgbb.ws/file/storage-sv1/QwbpG.png)
+
+
+
+
+
+![选题二](https://s2.imgbb.ws/file/storage-sv2/QwHff.png)
+
+
+
