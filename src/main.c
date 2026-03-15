@@ -6,18 +6,24 @@
 #include <unistd.h> // sleep函数
 #include <termios.h> // getch函数，vsc无法使用该库。
 
-// 确保DT_DIR被定义，某些系统可能没有这个常量
+// 部分系统未定义常量DT_DIR
 #ifndef DT_DIR
 #define DT_DIR 4
 #endif
 
+// ANSI转义序列 - 清屏和光标定位
+#define ANSI_CLEAR_SCREEN "\033[2J"
+#define ANSI_CURSOR_HOME "\033[H"
+#define ANSI_CLEAR_AND_HOME ANSI_CLEAR_SCREEN ANSI_CURSOR_HOME
+
 /* 清屏函数
 v1 由于作业要求采用ANSI 转义序列控制终端行为，放弃使用system clear。
-查表得知ASCII27 \033 为esc，[2J：清除整个屏幕，［H：Cursor Position，将光标移动到屏幕左上角。
+查表得知ASCII27 \033 为esc，[2J：清除整个屏幕，［H：将光标移动到屏幕左上角。
 v2 根据AI建议，增加fflush，强制将 printf 输出在缓冲区里等待的内容立即发送到终端。
+v3 使用宏定义提高ANSI转义序列的可读性。
 */
 void clearScreen() {
-    printf("\033[2J\033[H");
+    printf(ANSI_CLEAR_AND_HOME);
     fflush(stdout); // 刷新行缓冲
 }
 
