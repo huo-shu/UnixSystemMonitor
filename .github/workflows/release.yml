@@ -22,13 +22,11 @@ jobs:
       run: |
         make all
         ls -la src/main.o monitor
-        cp src/main.o monitor.o
 
     - name: Create Release with Assets
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          monitor.o
           monitor
         draft: false
         prerelease: false

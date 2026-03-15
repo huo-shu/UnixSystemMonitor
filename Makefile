@@ -4,7 +4,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
 TARGET = monitor
 SOURCE = src/main.c
-OBJ = $(SOURCE:.c=.o)
+OBJ = src/main.o
 
 # Default target
 all: $(TARGET)
